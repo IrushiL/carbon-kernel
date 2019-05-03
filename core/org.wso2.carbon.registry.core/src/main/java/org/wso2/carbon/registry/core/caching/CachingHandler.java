@@ -269,11 +269,15 @@ public class CachingHandler extends Handler {
         RegistryCacheKey cacheKey = RegistryUtils.buildRegistryCacheKey(connectionId, tenantId, path);
         Cache<RegistryCacheKey, GhostResource> cache = getCache(path);
         Cache<String, String> UUIDCache = getUUIDCache();
-        Resource resource;
+        Resource resource = null;
         if (cache.containsKey(cacheKey)) {
-            if((resource=((GhostResource<Resource>)cache.get(cacheKey)).getResource())!=null) {
-                String UUIDCacheKey = resource.getUUID();
-                UUIDCache.remove(UUIDCacheKey);
+            GhostResource<Resource> cacheValue = cache.get(cacheKey);
+            if (cacheValue != null){
+                resource=cacheValue.getResource();
+                if(resource != null) {
+                    String UUIDCacheKey = resource.getUUID();
+                    UUIDCache.remove(UUIDCacheKey);
+                }
             }
             cache.remove(cacheKey);
 
